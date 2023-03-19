@@ -1,0 +1,716 @@
+#include<iostream.h>
+#include<conio.h>
+#include<fstream.h>
+#include<stdio.h>
+#include<string.h>
+#include<iomanip.h>
+#include<stdlib.h>
+#include<process.h>
+#include<dos.h>
+
+void first();
+void null(char str[])
+{
+  for(int i=0;str[i]!='\0';i++)
+   str[i]='\0';
+}
+class db
+{
+     char email[30],pass[20];
+     char name[20],sname[20],repass[20];
+     char gender[2], city[15], state[15], home[15];
+     char phone[11], dob[11], status[50],rel[50],ques[25],ans[20];
+     int sts,frnd;
+
+     public:
+     void Default()
+     { null(name);null(sname);null(pass);null(repass);null(gender);null(dob);
+       null(email);null(city);null(state);null(home);null(status);null(phone);
+       null(rel);null(ques);null(ans);
+       sts=frnd=0;
+
+     }
+     void signup(int &n);
+     void login(int &n);
+     void homepg();
+     void prof();
+     void ffrnd();
+     void logout();
+     void fpass();
+     void msg(char temail[30]);
+ } mains;
+class online
+{  public:
+   char email1[30],email2[30];
+   char name1[20],sname1[20],name2[20],sname2[20];
+   int req;
+   online()
+   { req=0;
+    null(email1);null(email2);null(name1);null(sname1);null(name2);null(sname2);
+   }
+};
+class message
+{  public:
+   char r[30],s[30],mes[50];
+   message ()
+   {null(r);null(s);null(mes);
+   }
+};
+int captcha()
+{  randomize();
+   char captcha[5],rcaptcha[5];
+   for(int i=0;i<4;i++)
+	{ if (i%3==0)
+	   captcha[i]='A'+random(26);
+	  if (i%3==1)
+	   captcha[i]='a'+random(26);
+	  if (i%3==2)
+	   captcha[i]='0'+random(10);
+	  }
+	captcha[4]='\0';
+       cout<<"\n\t Captcha                 : ";puts(captcha);
+       cout<<"\n\t Enter captcha displayed : ";gets(rcaptcha);
+       if (strcmp(captcha,rcaptcha)!=0)
+       {  cout<<"\n\t !! Captcha did not match!! ";
+		return -1;
+       }
+       return 0;
+}
+void db::fpass()
+{
+   clrscr();
+   db temp;
+   char temail[30],tans[20];
+   int n=0;
+   long int pos;
+   cout<<"\t\t\t FORGOT PASSWORD ";
+   cout<<"\n\t Enter email id : ";gets(temail);
+   fstream f("db.dat",ios::in|ios::out|ios::binary);
+   f.seekg(0);
+   while(!f.eof())
+   { pos=f.tellg();
+     f.read((char*)&temp,sizeof(db));
+     if(strcmpi(temail,temp.email)==0)
+     {
+      cout<<"\n\t Question : ";puts(temp.ques);
+      cout<<"\n\t Answer   : ";gets(tans);
+      if(strcmpi(tans,temp.ans)==0)
+      {
+	fs:
+	null(temp.pass);null(temp.repass);
+	cout<<"\n\t Enter new password   : ";gets(temp.pass);
+	cout<<"\n\t Renter new passsword : ";gets(temp.repass);
+	if (strcmp(temp.pass,temp.repass)!=0)
+	{ cout<<"\n\t Passwords do not match !! "; goto fs;}
+	  f.seekp(pos);
+	  f.write((char*)&temp,sizeof(db));
+	  cout<<"\n\t Password changed successfully ";
+	}
+	else
+	  cout<<"\n\t Sorry, its not your account .";
+	  f.close();
+	  delay(1200);
+	  return;
+      }
+      else
+      n=1;
+   }
+   if (n==1)
+    { cout<<"\n\t There is no such account ";
+      delay(1200);
+      return; }
+}
+
+void db::signup(int &n)
+{      db temp;
+       ifstream fin("db.dat",ios::in|ios::binary);
+       char ch_;
+       int a;
+       clrscr();
+       cout<<"http\\www.friend_zone.com_\signup.html ";
+       cout<<"\n\n\t\t !! Welcome new user !! ";
+       cout<<"\n\n\tEnter Name            : "; gets(name);
+       cout<<"\n\tEnter Surname         : "; gets(sname);
+       cout<<"\n\tEnter DOB(dd/mm/yyyy) : "; gets(dob);
+       int dob_int;
+       dob_int=(dob[6]-'0')*1000+(dob[7]-'0')*100+(dob[8]-'0')*10+(dob[9]-'0');
+       if(dob_int>=2005)
+	  { cout<<"You are under-age kid, go back and play with toys ";
+	    n=1;delay(1200);
+	    return;}
+	cout<<"\n\tEnter Email           : "; gets(email);
+	re:
+	a=0;
+	if (fin)
+	{ fin.seekg(0,ios::beg);
+	  while(!fin.eof())
+	  { fin.read((char*)&temp,sizeof(db));
+	    if(strcmp(email,temp.email)==0)
+	    a=1;
+	  }
+	}
+	if (a==1)
+	{ cout<<"\n\t Email id already exists ";
+	  cout<<"\n\t Press 1 to go back. ";
+	  cout<<"\n\t Press 2 to renter email. ";
+	  cout<<"\n\t Enter your choice : ";cin>>a;
+	  if(a==2)
+	  {cout<<"\n\t Renter Email          : "; gets(email);
+	   goto re;}
+	  else
+	  {  n=1; return;}
+	}
+	fin.close();
+
+	cout<<"\n\tEnter Phone           : "; gets(phone);
+	label2:
+	cout<<"\n\tEnter Password        : "; gets(pass);
+	cout<<"\n\tRenter Password       : "; gets(repass);
+	if(strcmp(pass,repass)!=0)
+       {
+	cout<<"\n\tPassword do not match!!";
+	goto label2;
+       }
+
+       cout<<"\n\tEnter gender          : "; cin>>gender;
+       cout<<"\n\tEnter city            : "; gets(city);
+       cout<<"\n\tEnter security question for account recovery : ";gets(ques);
+       cout<<"\n\tEnter answer          : ";gets(ans);
+       cout<<"\n\tAre you sure you want to continue(y/n) ? "; cin>>ch_;
+       if (ch_=='y'||ch_=='Y')
+       { int a=0;
+	 lab:
+	 a=captcha();
+	 if (a==-1)
+	 {  cout<<"\n\t Captcha did not match!!";
+	    cout<<"\n\t Enter 1 to go to homepage ";
+	    cout<<"\n\t Enter 2 to renter captcha again ";
+	    cout<<"\n\t Enter your choice : ";cin>>a;
+	    if(a==2)
+	    goto lab;
+	    else
+	    n=1;
+	    return;
+	 }
+       }
+       else
+       {n=1;return;}
+      ofstream fout("db.dat",ios::app|ios::binary);
+      fout.seekp(0,ios::end);
+      fout.write((char*)&mains,sizeof(db));
+      fout.close();
+
+}
+void db::login(int &n)
+{      db temp2;
+       int ch;
+       label3:
+       clrscr();
+       char temail[30],tpass[20];
+       cout<<"\n\n\t\t\t Welcome to Friend zone: ";
+       cout<<"\n\t Enter Email Id          : ";gets(temail);
+       cout<<"\n\t Enter Password          : ";gets(tpass);
+	  int d=0;
+	  d= captcha();
+	  if(d==-1)
+	  { cout<<"\n\t Press 1 to go back to homepage ";
+	    cout<<"\n\t Press 2 to try logging in again ";
+	    cout<<"\n\t Your choice= ";cin>>ch;
+	    if (ch==2) goto label3;
+	    else n=2 ;
+	    return;
+	   }
+       ifstream fin("db.dat",ios::in|ios::binary);
+       if(!fin)
+       { cout<<"\n\t Database Corrupt ";
+	 cout<<"\n\t Try logging later ";
+	 n=2;delay(1500);
+	 return; }
+       fin.seekg(0,ios::beg);
+       while(!fin.eof())
+       { fin.read((char*)&temp2,sizeof(db));
+	 if (strcmpi(temail,temp2.email)==0)
+	      n=3;
+	 if (strcmp(tpass,temp2.pass)==0)
+	      n++;
+	 if(n==4)
+	  break;
+       }
+       if (n==0)
+       { n=2;
+	 cout<<"\n\t Wrong Email Id ";
+	 delay(2000);
+	 return;
+       }
+       if (n==1||n==3)
+       { n=2;
+	 cout<<"\n\t Wrong Password ";
+	 delay(2000);
+	 return;
+       }
+       if (n==4)
+       { mains=temp2;
+	 int count=0;
+	 ifstream fout("online.dat",ios::in|ios::binary);
+	  fout.seekg(0,ios::beg);
+	  online o;
+	     if(fout)
+	     { while(fout.read((char*)&o,sizeof(o)))
+	      {
+		 if(strcmpi(email,o.email1)==0&&o.req==1)
+		  count++;
+		 else if(strcmpi(email,o.email2)==0&&o.req==1)
+		  count++;
+	      }
+	     }
+	      fout.close();
+	      mains.frnd=count;
+	    }
+	 else
+	   n=2;
+
+       cout<<"\n\t Welcome "<<name<<" "<<sname;
+       delay(1500);
+
+}
+void db::homepg()
+{  int choice;
+   clrscr();
+   cout<<"\n\n\t\t\t Welcome "<<name<<' '<<sname;
+   cout<<"\n\t # Your thoughts : ";
+   if (sts==0) cout<<"You have not shared any thoughts.";
+   else cout<<status;
+   cout<<"\n\n\t # Number of friends : "<<frnd;
+   cout<<"\n\t # Lives in :"<<city;
+   cout<<"\n\n\t 1.View your profile ";
+   cout<<"\n\t 2.Share your thoughts ";
+   cout<<"\n\t 3.Change your password ";
+   cout<<"\n\t 4.Find a friend ";
+   cout<<"\n\t 5.See your friend circle & Chat ";
+   cout<<"\n\t 6.Log out ";
+   cout<<"\n\n\t   What do you want to do ? ";
+   cout<<"\n\t   Enter your choice : ";
+   cin>>choice;
+   switch(choice)
+   { case 1: prof();
+	     break;
+     case 2: clrscr();
+	     cout<<"\t\t\t Welcome "<<name<<' '<<sname;
+	     cout<<"\n\t You have shared "<<sts<<" thoughts ";
+	     cout<<"\n\n\t Enter your thought : ";gets(status);
+	     cout<<"\n\t Thought shared successfully ";
+	     sts+=1;delay(900);
+	     homepg();
+	     break;
+     case 3:{ clrscr();
+	      int ab;
+	      char opass[20];
+	      cout<<"\t\t\t Welcome "<<name<<' '<<sname;
+	      cout<<"\n\t Enter 1 to change password ";
+	      cout<<"\n\t Enter 2 to change security question ";
+	      cout<<"\n\t Enter your choice :";cin>>ab;
+	      if (ab==1)
+	      {rs:
+	       cout<<"\n\t Enter old password  : ";gets(opass);
+	       if(strcmp(opass,pass)!=0)
+		{	cout<<"\n\t Password do not match !! "; goto rs;}
+	       ps:
+	       cout<<"\n\t Enter new password   : ";gets(pass);
+	       cout<<"\n\t Renter new passsword : ";gets(repass);
+	       if (strcmp(pass,repass)!=0)
+	       { cout<<"\n\t Passwords do not match !! "; goto ps;}
+	       else
+	       cout<<"\n\t Password changed successfully ";
+	      }
+	     else if(ab==2)
+	     {
+	       cout<<"\n\t New question : ";gets(ques);
+	       cout<<"\n\t Answer: ";gets(ans);
+	       cout<<"\n\t Security question changed successfully. ";
+	     }
+	     else
+	     {
+	       cout<<"\n\t Wrong choice!! Returning to homepage ";
+	     }
+	     delay(1500);
+	     homepg();
+	     } break;
+     case 4: {ffrnd();}
+	     break;
+     case 5:
+	     int i,m;
+	     online o;
+	     f:
+	     i=1;
+	     ifstream fr("online.dat",ios::in|ios::binary);
+	     clrscr();
+	     cout<<"\n\n\t\t\t  Welcome "<<name<<' '<<sname;
+	     cout<<"\n\t  Friend count :"<<frnd;
+	     fr.seekg(0);
+	     while(fr.read((char*)&o,sizeof(o)))
+	     {
+	      if(strcmpi(email,o.email1)==0&&o.req==1)
+		{ cout<<"\n\t"<<i<<" "<<o.name2<<" "<<o.sname2;
+		  cout<<"\n\t  Email: "<<o.email2;
+		  i++;
+		}
+	      else if(strcmpi(email,o.email2)==0&&o.req==1)
+		{ cout<<"\n\t"<<i<<" "<<o.name1<<" "<<o.sname1;
+		  cout<<"\n\t  Email: "<<o.email1;
+		  i++;
+	       }
+	     }
+	     fr.close();
+	      int ch;
+	      cout<<"\n\n\t Enter 1 to view profile " ;
+	      cout<<"\n\t Enter 2 to message friend ";
+	      cout<<"\n\t Enter 3 to remove friend ";
+	      cout<<"\n\t Enter 4 to return back ";
+	      cout<<"\n\t Enter your choice ";cin>>ch;
+	      if (ch==1)
+	      { db temp;
+		char t_email[30];
+		cout<<"\n\t Enter Email of friend : ";
+		gets(t_email);
+		ifstream f("db.dat",ios::in|ios::binary);
+		f.seekg(0);
+		while(!f.eof())
+		{ f.read((char*)&temp,sizeof(temp));
+		  if(strcmpi(t_email,temp.email)==0)
+		  { cout<<"\n\t Your friend's details : ";
+		    cout<<"\n\t Name                 :"<<temp.name<<' '<<temp.sname;
+		    cout<<"\n\t Email                : "<<temp.email;
+		    cout<<"\n\t Phone Number         : "<<temp.phone;
+		    cout<<"\n\t Date of Birth        : "<<temp.dob;
+		    cout<<"\n\t Thought              : "<<temp.status;
+		    cout<<"\n\t Relationship Status  : "<<temp.rel;
+		    cout<<"\n\t Lives in             : "<<temp.city;
+		    cout<<"\n\t Hometown             : "<<temp.home;
+		    cout<<"\n\t No. of friends       : "<<temp.frnd;
+		    cout<<"\n\t Press any key to continue";
+		    getch();
+		    f.close();
+		    break;
+		  }
+		}
+		goto f;
+	      }
+	      else if(ch==2)
+	      { char t_email[30];
+		cout<<"\n\t Enter Email of friend : ";
+		gets(t_email);
+		msg(t_email);
+		goto f;
+	      }
+	      else if (ch==3)
+	      {  char t_email[30];
+		 online ob;
+		 fstream fre("online.dat",ios::in|ios::out|ios::binary);
+		 cout<<"\n\t Enter Email of friend : ";
+		 gets(t_email);
+		 fre.seekg(0);
+		 long int pos=0;
+		 while(!fre.eof())
+		{ pos=fre.tellg();
+		  fre.read((char*)&ob,sizeof(ob));
+		  if((strcmpi(email,ob.email1)==0&&strcmpi(t_email,ob.email2)==0&&ob.req==1)||(strcmpi(email,ob.email2)==0&&strcmpi(t_email,ob.email1)==0&&ob.req==1))
+		  { ob.req=2;
+		    fre.seekp(pos);
+		    fre.write((char*)&ob,sizeof(ob));
+		    frnd--;
+		    cout<<"\n\t Friend removed ";
+		    delay(1000); fre.close();
+		    goto f;
+		  }
+		}
+		 if(fre.eof())
+		  { cout<<"\n\t The person is not your friend ";
+		    delay(1200); fre.close();
+		    goto f;
+		  }
+	      }
+	      else if(ch==4)
+	      { homepg();}
+	      else
+	      { cout<<"\n\t Wrong Choice ";
+		cout<<"\n\t Returning to homepage ";
+		homepg();
+	      }
+	     break;
+     case 6: logout();
+	      first();
+	      break;
+     default: cout<<"\n\t Wrong choice!! ";
+	      delay(2000);homepg();
+   }
+}
+void db::prof()
+{  int ch;
+   label4:
+   clrscr();
+   cout<<"\n\t Welcome to your profile "<<name<<" "<<sname;
+   cout<<"\n\t Name          : "<<name<<' '<<sname;
+   cout<<"\n\t Email         : "<<email;
+   cout<<"\n\t Gender        : "<<gender;
+   cout<<"\n\t Phone number  : "<<phone;
+   cout<<"\n\t Date of Birth : "<<dob;
+   cout<<"\n\t City          : "<<city;
+   cout<<"\n\t State         : "<<state;
+   cout<<"\n\t Hometown      : "<<home;
+   cout<<"\n\t Relationship  : "<<rel;
+   cout<<"\n\n\t Press 1 to go back ";
+   cout<<"\n\t Press 2 to edit your profile ";
+   cout<<"\n\t Enter your choice : ";cin>>ch;
+   switch(ch)
+   {
+    case 1: homepg();
+	    break;
+    case 2: { int eh,f;
+	      f=0;
+	      label5:
+	      if(f!=0)
+	      {delay(900);}
+	      f++;
+	      clrscr();
+	      cout<<"\n\t\t\t Welcome "<<name<<' '<<sname ;
+	      cout<<"\n\t Edit your profile : ";
+	      cout<<"\n\t Note: You cannot change name, gender, Date of Birth, Email id ";
+	      cout<<"\n\t 1.Change phone number ";
+	      cout<<"\n\t 2.Change city ";
+	      cout<<"\n\t 3.Change State ";
+	      cout<<"\n\t 4.Change Hometown ";
+	      cout<<"\n\t 5.Change Relationship";
+	      cout<<"\n\t 6.Go back";
+	      cout<<"\n\t   Enter your choice : ";cin>>eh;
+		 switch(eh)
+		 {
+		   case 1: cout<<"\n\t Enter new phone number : ";gets(phone);
+			   cout<<"\n\t Phone number changed";
+			   goto label5;
+		   case 2: cout<<"\n\t Enter new city : ";gets(city);
+			   cout<<"\n\t City changed";
+			   goto label5;
+		   case 3: cout<<"\n\t Enter new state : ";gets(state);
+			   cout<<"\n\t State changed";
+			   goto label5;
+		   case 4: cout<<"\n\t Enter new hometown : ";gets(home);
+			   cout<<"\n\t Home changed";
+			   goto label5;
+		   case 5: cout<<"\n\t Enter relationship : ";gets(rel);
+			   cout<<"\n\t Relationship updated ";
+			   goto label5;
+		   case 6: goto label4;
+		   default: "\n\t Wrong choice!!";
+			    goto label5;
+		 }}
+    default : cout<<"\n\t Wrong choice!!";
+	      cout<<"\n\t Returning to home page ";
+	      delay(1200);
+	      homepg();
+   }
+
+
+}
+
+void db::ffrnd()
+{    db temp;
+     online t;
+     fstream on("online.dat",ios::in|ios::app|ios::binary);
+     int ch,flag=0;
+     char temail[30];
+     clrscr();
+     cout<<"\n\n\t\t\t Welcome "<<name<<' '<<sname;
+     cout<<"\n\n\t Find your Friend here ";
+     cout<<"\n\t Enter Email id of your friend : ";gets(temail);
+     ifstream fin("db.dat",ios::in|ios::binary);
+     fin.seekg(0,ios::beg);
+     while(!fin.eof())
+     {
+	fin.read((char*)&temp,sizeof(db));
+	if(strcmpi(temail,email)==0)
+	{ cout<<"\n\t It is you ";
+	  cout<<"\n\t Redirecting to your profile ";
+	  delay(2000);
+	  prof();
+	}
+	else if(strcmpi(temail,temp.email)==0)
+	{    cout<<"\n\t Your friend's details : ";
+	     cout<<"\n\t Name                  : "<<temp.name<<' '<<temp.sname;
+	     cout<<"\n\t Email                 : "<<temp.email;
+	     cout<<"\n\t Phone Number          : "<<temp.phone;
+	     cout<<"\n\t Date of Birth         : "<<temp.dob;
+	     cout<<"\n\t Thought               : "<<temp.status;
+	     cout<<"\n\t Relationship Status   : "<<temp.rel;
+	     cout<<"\n\t Lives in              : "<<temp.city;
+	     cout<<"\n\t No. of friends        : "<<temp.frnd;
+
+	     on.seekg(0);
+	     while(!on.eof())
+	     { on.read((char*)&t,sizeof(t));
+	       if(((strcmpi(temp.email,t.email1)==0)&&(strcmpi(email,t.email2)==0)&&t.req==1)||((strcmpi(temp.email,t.email2)==0)&&(strcmpi(email,t.email1)==0)&&t.req==1))
+	       {  flag=2;
+		 cout<<"\n\t This person is already in your friend circle ";
+		 cout<<"\n\t Enter 1 to go back ";
+		 break;
+	       }
+	       else
+	       { flag=3;
+	       }
+	     }
+	    if (flag==3)
+	    {
+	      cout<<"\n\t Enter 1 to go back ";
+	      cout<<"\n\t Enter 2 to add this person to your friend circle ";
+	    }
+	    on.close();
+	    cout<<"\n\t Your choice : ";cin>>ch;
+	    if(ch==2)
+	    {   ofstream fout("online.dat",ios::app|ios::binary);
+		fout.seekp(0,ios::end);
+		strcpy(t.email1,temp.email);
+		strcpy(t.email2,email);
+		strcpy(t.name1,temp.name);
+		strcpy(t.sname1,temp.sname);
+		strcpy(t.name2,name);
+		strcpy(t.sname2,sname);
+		t.req=1;
+		fout.write((char*)&t,sizeof(t));
+		cout<<"\n\t Person added to your friend circle. ";
+		cout<<"\n\t Returning to homepage ";
+		frnd++;
+		delay(2000);
+		fout.close();
+		homepg();
+	    }
+	    else if(ch==1)
+	      break;
+	    else
+	      cout<<"\n\t Wrong choice !! Returning to homepage ";
+	}
+	else
+	  flag=1;
+     }
+     if (flag==1)
+     cout<<"\n\t The person does not exist ";
+     delay(1500);
+     homepg();
+}
+void db::msg(char temail[])
+{  clrscr();
+   cout<<"\n\n\t\t\t\t Chat Rules ";
+   cout<<"\n\n\t 1. To send your message press enter key.";
+   cout<<"\n\n\t 2. To end chatting press ~ then enter key.";
+   cout<<"\n\n\t    Press enter key to continue to chat window. ";
+   getch();
+   clrscr();
+   message ob;
+   ifstream f("message.dat",ios::in|ios::binary);
+   int flag=0;
+   f.seekg(0);
+   cout<<"\n\t\t\t\t CHAT ";
+   cout<<"\n\t Sender   : "<<email;
+   cout<<"\n\t Reciever : "<<temail;
+   while(f.read((char*)&ob,sizeof(ob)))
+   {
+
+     if(strcmpi(ob.r,email)==0&&strcmpi(ob.s,temail)==0)
+     { cout.setf(ios::right);
+       cout<<setw(74)<<'\n'<<ob.mes; delay(200);
+       cout.unsetf(ios::right);
+       flag=1;
+     }
+     else if(strcmpi(ob.s,email)==0&&strcmpi(ob.r,temail)==0)
+     {
+       cout<<"\n\t "<<ob.mes; delay(200);
+       flag=1;
+     }
+
+   }
+   f.close();
+   if (flag==0)
+    cout<<"\n\n\t Be the First one to do the beginning .";
+   ofstream fout("message.dat",ios::app,ios::binary);
+   m:
+   cout<<"\n   Chat: ";
+   {message chat;
+    gets(chat.mes);
+    if(chat.mes[0]=='~')
+    {
+      f.close();
+      return;
+    }
+    else
+    { strcpy(chat.s,email);
+      strcpy(chat.r,temail);
+      fout.write((char*)&chat,sizeof(message));
+      goto m;
+    }
+   }
+}
+void db::logout()
+{    db temperoray;
+      long int pos=0;
+      fstream f("db.dat",ios::in|ios::out|ios::binary);
+      f.seekg(0,ios::beg);
+     while(!f.eof())
+     {  pos=f.tellg();
+	f.read((char*)&temperoray,sizeof(db));
+	if(strcmpi(mains.email,temperoray.email)==0)
+       { f.seekp(pos);
+	f.write((char*)&mains,sizeof(db));
+	 f.close();
+	 cout<<"\n\t Logging out" ;
+	 delay(1000);
+	 return;
+      }
+    }
+
+}
+
+
+ void first()
+ {  int ch,p;
+    label1:
+    mains.Default();
+    p=0;
+    clrscr();
+    cout<<"\n\n\t\t\t WELCOME TO THE FRIEND ZONE";
+    cout<<"\n\n\t Want to signup or login ?";
+    cout<<"\n\t 1. Enter 1 to signup ";
+    cout<<"\n\t 2. Enter 2 to login ";
+    cout<<"\n\t 3. Enter 3 if forgot password ";
+    cout<<"\n\t 4. Enter 4 to exit ";
+    cout<<"\n\t    Your choice = ";cin>>ch;
+    switch(ch)
+    {
+       case 1:{
+		mains.signup(p);
+		if (p==1)
+		  goto label1 ;
+		cout<<"\n\n\t Congratulations!! Account created successfully ";
+		cout<<"\n\t\t You are member of friend zone ";
+		delay(1500);
+		mains.homepg();
+	      }
+       case 2:{ mains.login(p);
+		if(p==2)
+		{goto label1;}
+		mains.homepg();
+	      }
+       case 3:{ mains.fpass();
+		goto label1;
+	      }
+       case 4:{  cout<<"\n\t Exiting";
+		 delay(1000);
+		 exit(0);
+	      }
+       default:  cout<<"\n\t Wrong Choice ";
+		 delay(900);
+		 goto label1;
+    }
+
+ }
+
+void main()
+{ first();
+}
